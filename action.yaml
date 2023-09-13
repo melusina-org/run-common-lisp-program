@@ -1,0 +1,40 @@
+name: 'Run a Common Lisp Program'
+description: >-
+  Load a Common Lisp System and execute a program it provides.
+branding:
+  icon: box
+  color: blue
+inputs:
+  implementation:
+    description: |
+      The Common Lisp implementation to use. This can be one of the
+      following values:
+
+        abcl clisp ecl sbcl
+
+      in the future we would like to support all of
+
+        abcl clasp ecl gcl sbcl
+      
+    default: 'sbcl'
+
+  system:
+    description: |
+      The Common Lisp system to load.
+    required: true
+
+  entrypoint:
+    description: |
+      The entrypoint of the program to run.
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Run a Common Lisp Program'
+      shell: sh
+      run: |
+        ${{ github.action_path }}/with_lisp_implementation ${{ inputs.implementation }} <<EOF
+        (ql:quickload '#:${{ inputs.system }})
+        (${{ inputs.system }}:${{ inputs.entrypoint }})
+        EOF
